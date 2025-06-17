@@ -20,17 +20,14 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB Connection Error:', err));
 
-const cors = require('cors');
-
-// Allow Vercel frontend and local dev frontend
+// ✅ CORS Setup
 const allowedOrigins = [
-  'https://your-vercel-app.vercel.app',  // ✅ your deployed frontend
-  'http://localhost:3000'                // ✅ for local dev
+  'https://your-vercel-app.vercel.app',
+  'http://localhost:5173'
 ];
 
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl)
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
@@ -41,7 +38,8 @@ const corsOptions = {
   credentials: true,
 };
 
-app.use(cors(corsOptions));
+app.use(cors(corsOptions)); // ✅ set it once
+
 
 
 // ✅ Stripe webhook must be raw body
