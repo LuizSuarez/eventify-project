@@ -23,7 +23,7 @@ function Login() {
        alert(response.data.msg[0]);
 
       // Save token and user in localStorage
-      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(res.data.user));
 
       alert(`Welcome ${res.data.user.name} (${res.data.user.role})`);
