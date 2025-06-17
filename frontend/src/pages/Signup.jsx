@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
+import { registerUser } from '../api/api';
 
 function Signup() {
     const [form, setForm] = useState({
@@ -85,7 +86,7 @@ function Signup() {
                 role: form.role
             };
 
-            const response = await axios.post('http://localhost:5000/api/auth/signup', payload);
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/signup`, payload);
             alert(response.data.msg[0]);
 
             setForm({

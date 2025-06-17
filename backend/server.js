@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const mongoose = require('mongoose');
 const cors = require('cors');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const connectDB = require('./config/db');
@@ -12,13 +13,12 @@ const bookingRoutes = require('./routes/bookingRoutes');
 const paymentRoutes = require('./routes/paymentRoutes'); // Import payment routes
 const { handleStripeWebhook } = require('./controllers/paymentController');
 
-
-
-
-connectDB();
 const app = express();
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB Connection Error:', err));
 
-
+  app.use(cors({ origin: '*' }));
 
 app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook);
 
