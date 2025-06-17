@@ -22,8 +22,8 @@ mongoose.connect(process.env.MONGO_URI)
 
 // ✅ CORS Setup
 const allowedOrigins = [
-  'https://your-vercel-app.vercel.app',
-  'http://localhost:5173'
+  'https://eventify-project.vercel.app',
+  'http://localhost:3000'
 ];
 
 const corsOptions = {
