@@ -1,6 +1,4 @@
-
 import React, { useState } from 'react';
-import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginUser } from '../api/api';
 
@@ -8,37 +6,49 @@ function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
   const navigate = useNavigate();
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-       const response = await loginUser(form);
-       if (response.data.success) {
-           alert('Login successful! Welcome back.');
-       } else {
-           alert('Login failed. Please try again.');
-           return;
-       }
-       alert(response.data.msg[0]);
+      const response = await loginUser(form);
+      const { success, token, user, msg } = response.data;
 
-      // Save token and user in localStorage
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
+      if (!success) {
+        alert(msg || 'Login failed. Please try again.');
+        return;
+      }
 
-      alert(`Welcome ${res.data.user.name} (${res.data.user.role})`);
+      // Save token & user info
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
 
-      // Redirect based on role
-      const role = res.data.user.role;
-      if (role === 'admin') navigate('/dashboard/admin');
-      else if (role === 'user') navigate('/dashboard/user');
-      else if (role === 'provider') navigate('/dashboard/provider');
-      else if (role === 'venue') navigate('/dashboard/venue');
-      else navigate('/unauthorized');
+      alert(`Welcome ${user.name} (${user.role})`);
+
+      // Navigate based on role
+      switch (user.role) {
+        case 'admin':
+          navigate('/dashboard/admin');
+          break;
+        case 'user':
+          navigate('/dashboard/user');
+          break;
+        case 'provider':
+          navigate('/dashboard/provider');
+          break;
+        case 'venue':
+          navigate('/dashboard/venue');
+          break;
+        default:
+          navigate('/unauthorized');
+      }
 
       setForm({ email: '', password: '' });
+
     } catch (err) {
-      alert(err.response?.data?.msg || 'Login failed');
+      console.error(err);
+      alert(err.response?.data?.msg || 'Login failed due to server error');
     }
   };
 
@@ -47,9 +57,11 @@ function Login() {
       <div className="d-flex align-items-center justify-content-center mb-3" style={{ marginTop: 10, gap: 12 }}>
         <h2 className="fw-bold mb-0" style={{ fontSize: "4rem", fontFamily: "lobster", background: "linear-gradient(rgb(0, 0, 0), #a259ff)", WebkitBackgroundClip: "text", color: "transparent" }}>Eventify</h2>
       </div>
-      <div className="card shadow p-4" style={{ minWidth: 370, maxWidth: 400, marginTop: 10}}>
+      <div className="card shadow p-4" style={{ minWidth: 370, maxWidth: 400, marginTop: 10 }}>
         <h4 className="text-center mb-2">Sign in</h4>
-        <p className="text-center  mb-4" style={{ color: "#a259ff" }}>Enter your email and password to access your account</p>
+        <p className="text-center mb-4" style={{ color: "#a259ff" }}>
+          Enter your email and password to access your account
+        </p>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label className="form-label fw-semibold">Email</label>
@@ -77,7 +89,7 @@ function Login() {
               required
             />
           </div>
-          <button className="btn btn-dark w-100 mb-3" type="submit" style={{ background: "#a259ff", borderColor: "white"}}>
+          <button className="btn btn-dark w-100 mb-3" type="submit" style={{ background: "#a259ff", borderColor: "white" }}>
             Sign In
           </button>
         </form>
@@ -89,7 +101,7 @@ function Login() {
         <div className="text-center mt-2">
           <span className="text-muted" style={{ fontSize: "1rem" }}>
             Don't have an account?{' '}
-            <Link to="/signup" className="fw-semibold text-decoration-none"  style={{ color: "#a259ff" }}>
+            <Link to="/signup" className="fw-semibold text-decoration-none" style={{ color: "#a259ff" }}>
               Sign up
             </Link>
           </span>
