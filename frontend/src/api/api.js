@@ -1,8 +1,12 @@
 import axios from 'axios';
 
-const apiUrl = import.meta.env.VITE_API_URL || 'https://eventify-project-production.up.railway.app';
-if (!apiUrl) {
-  console.error('VITE_API_URL is not defined. Falling back to default URL.');
+let apiUrl = 'https://eventify-project-production.up.railway.app';
+
+// Use VITE_API_URL only if defined (typically during development or build time)
+if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL) {
+  apiUrl = import.meta.env.VITE_API_URL;
+} else {
+  console.warn('VITE_API_URL not found. Falling back to default production URL.');
 }
 
 const API = axios.create({
