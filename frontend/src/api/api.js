@@ -19,3 +19,10 @@ const API = axios.create({
 export const registerUser = (data) => API.post('/api/auth/signup', data);
 export const loginUser = (credentials) => API.post('/api/auth/login', credentials);
 export const fetchVenues = () => API.get('/api/venues');
+export const fetchVenueById = (id) => API.get(`/api/venues/${id}`);
+export const fetchUserProfile = (userId) => API.get(`/api/users/${userId}`);
+export const updateUserProfile = (userId, data) => API.put(`/api/users/${userId}`, data, {
+  headers: {
+    'Authorization': `Bearer ${localStorage.getItem('token')}`
+  }
+}); 
