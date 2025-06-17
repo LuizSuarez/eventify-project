@@ -20,22 +20,29 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB Connection Error:', err));
 
-// ✅ CORS setup (allow both localhost and vercel frontend)
+const cors = require('cors');
+
+// Allow Vercel frontend and local dev frontend
 const allowedOrigins = [
-  'http://localhost:3000',
-  'https://eventify-project.vercel.app'
+  'https://your-vercel-app.vercel.app',  // ✅ your deployed frontend
+  'http://localhost:3000'                // ✅ for local dev
 ];
 
-app.use(cors({
+const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      return callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true
-}));
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+
 
 // ✅ Stripe webhook must be raw body
 app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook);
