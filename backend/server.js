@@ -18,7 +18,24 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB Connection Error:', err));
 
-  app.use(cors({ origin: '*' }));
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://eventify-project.vercel.app'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
+
 
 app.post('/api/payments/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook);
 

@@ -86,7 +86,13 @@ function Signup() {
                 role: form.role
             };
 
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/signup`, payload);
+            const response = await registerUser(payload);
+            if (response.data.success) {
+                alert('Signup successful! Please check your email for verification.');
+            } else {
+                alert('Signup failed. Please try again.');
+                return;
+            }
             alert(response.data.msg[0]);
 
             setForm({
