@@ -1,6 +1,6 @@
 # Eventify‑Project
 
-Live Demo
+[Live Demo](https://eventify-project.vercel.app/)
 
 # About
 
